@@ -1,0 +1,9 @@
+# --- Core ---
+fastmcp>=0.1.3        # for MCP server + client
+openai>=1.40.0        # for LLM API + tool calling
+python-dotenv>=1.0.1  # for loading .env (optional but convenient)
+
+# --- Optional utilities ---
+fastapi>=0.111.0      # only if you use FastAPI transport
+uvicorn>=0.30.0       # only if you use uvicorn or FastAPI
+pydantic>=2.7.0       # (fastmcp already brings it, but safe to pin)

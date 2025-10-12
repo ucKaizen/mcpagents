@@ -6,30 +6,55 @@ mcp = FastMCP("hello-mcp")
 
 # NOTE: Depending on your fastmcp version, you may need @mcp.tool() instead of @mcp.tool
 @mcp.tool
-def calculate_magic_number(param: Optional[str] = None) -> dict:
+def calculate_reach(campaign_id: str) -> dict:
     """
-    Dummy MCP tool: returns a canned message and a 'magic' number.
+    Calculate estimated reach for a given campaign.
+
+    Args:
+        campaign_id: Unique identifier of the campaign.
+
+    Returns:
+        A dictionary with:
+            - campaign_id: The provided campaign ID.
+            - estimated_reach: A deterministic numeric metric derived from the ID.
+            - message: A summary string.
     """
-    magic = len(param) if param else 42
+    # Simple deterministic logic — always produces same result for same ID
+    estimated_reach = (sum(ord(c) for c in campaign_id) * 1000) % 1_000_000
+
     return {
-        "message": "This is dummy output",
-        "echo_to": param or "world",
-        "magic_number": magic,
+        "message": f"Estimated reach calculated for campaign {campaign_id}.",
+        "campaign_id": campaign_id,
+        "estimated_reach": estimated_reach,
     }
 
 
 @mcp.tool
-def calculate_brand_lift(param: Optional[str] = None) -> dict:
+def calculate_brand_lift(campaign_id: str) -> dict:
     """
-    Dummy MCP tool: returns a canned message and a 'magic' number.
+    Calculate brand lift for a given campaign.
+
+    Args:
+        campaign_id: Unique identifier of the campaign.
+
+    Returns:
+        A dictionary with:
+            - campaign_id: The provided campaign ID.
+            - brand_lift_percentage: A deterministic percentage value derived from the ID.
+            - message: A summary string.
     """
+    # Deterministic brand lift based on campaign ID
+    brand_lift_percentage = (sum(ord(c) for c in campaign_id) % 20) + 1  # 1–20%
+
     return {
-        "message": "This is dummy output",
-        "echo_to": param or "world",
-        "brand_lift": 999,
+        "message": f"Brand lift calculated for campaign {campaign_id}.",
+        "campaign_id": campaign_id,
+        "brand_lift_percentage": brand_lift_percentage,
     }
 
-# ✅ Use a valid URI for resources (must include a scheme)
+
+
+#  Use a valid URI for resources (must include a scheme)
 @mcp.resource("res://health")
 def health() -> dict:
     return {"ok": True, "server": "hello-mcp"}

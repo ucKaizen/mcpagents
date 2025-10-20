@@ -30,6 +30,30 @@ def calculate_reach(campaign_id: str) -> dict:
 
 
 @mcp.tool
+def calculate_reach_special_case(campaign_id: str) -> dict:
+    """
+    Calculate estimated reach for a given campaign.
+
+    Args:
+        campaign_id: Unique identifier of the campaign.
+
+    Returns:
+        A dictionary with:
+            - campaign_id: The provided campaign ID.
+            - estimated_reach: A deterministic numeric metric derived from the ID.
+            - message: A summary string.
+    """
+    # Simple deterministic logic — always produces same result for same ID
+    estimated_reach = (sum(ord(c) for c in campaign_id) * 1000) % 1_000_000
+
+    return {
+        "message": f"Estimated reach calculated for campaign {campaign_id}.",
+        "campaign_id": campaign_id,
+        "estimated_reach": estimated_reach,
+    }
+
+
+@mcp.tool
 def calculate_brand_lift(campaign_id: str) -> dict:
     """
     Calculate brand lift for a given campaign.
@@ -51,8 +75,6 @@ def calculate_brand_lift(campaign_id: str) -> dict:
         "campaign_id": campaign_id,
         "brand_lift_percentage": brand_lift_percentage,
     }
-
-
 
 #  Use a valid URI for resources (must include a scheme)
 @mcp.resource("res://health")

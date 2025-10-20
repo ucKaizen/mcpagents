@@ -1,0 +1,59 @@
+# brands.yml
+# Canonical brand list is optional but useful for validation or UI
+brands:
+  - Samsung
+  - Apple
+  - Google
+  - OnePlus
+  - Xiaomi
+  - Huawei
+  - LG
+  - Sony
+  - Dell
+
+# Lowercase aliases → canonical brand name
+aliases:
+  samsung: Samsung
+  galaxy: Samsung
+  z fold: Samsung
+  fold: Samsung
+  s24: Samsung
+  note: Samsung
+
+  apple: Apple
+  iphone: Apple
+  ipad: Apple
+  macbook: Apple
+
+  google: Google
+  pixel: Google
+  nest: Google
+
+  oneplus: OnePlus
+
+  xiaomi: Xiaomi
+  mi: Xiaomi
+  redmi: Xiaomi
+  poco: Xiaomi
+
+  huawei: Huawei
+  honor: Huawei
+
+  lg: LG
+  sony: Sony
+  dell: Dell
+
+# Optional regex hints for tricky patterns (case-insensitive)
+# If pattern matches, we can short-circuit to that brand.
+regex_hints:
+  - brand: Samsung
+    pattern: "\\bz[-\\s]?fold\\s*\\d*\\b"
+  - brand: Apple
+    pattern: "\\biphone\\s*\\d{1,2}(\\s*(pro|max|plus|mini))?\\b"
+  - brand: Google
+    pattern: "\\bpixel\\s*\\d{1,2}(\\s*(pro|xl))?\\b"
+
+# Thresholds you can tweak without code changes
+thresholds:
+  ner_min_conf: 0.70
+  fuzzy_min_score: 86

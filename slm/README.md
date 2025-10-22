@@ -1,4 +1,4 @@
-# Fuzzy extrction of brand and models
+# Fuzzy extraction of brand and models
 
 ## Process
 ### Configuration Loading
@@ -9,12 +9,12 @@ The system first loads brand configurations from either:
 The process involves analyzing prompts through several steps:
 
 Matching Methods
-Direct Matching: Looking for exact brand names
-Pattern Recognition: Identifying brand-specific formatting
-Contextual Analysis: Understanding brand context from surrounding text
-Fuzzy Matching: Handling misspellings and variations
+1. Direct Matching: Looking for exact brand names
+2. Pattern Recognition: Identifying brand-specific formatting
+3. Contextual Analysis: Understanding brand context from surrounding text
+4. Fuzzy Matching: Handling misspellings and variations
 Validation
-The extracted brand information is validated against:
+The extracted brand information is validated against Known brand lists, Brand formatting rules and Business logic constraints
 
 ## How to run
 

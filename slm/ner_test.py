@@ -5,15 +5,6 @@ ner = pipeline("token-classification",
                model="dslim/bert-base-NER",
                aggregation_strategy="simple")
 
-def add_context(text):
-    """Add product context hints to improve NER detection"""
-    product_keywords = ["z-fold", "iphone", "galaxy", "pixel"]
-    
-    # Check if text contains product keywords
-    if any(keyword in text.lower() for keyword in product_keywords):
-        return f"Product Review: In this tech review of the {text}"
-    return text
-
 # Test texts with various entity types
 texts = [
     "I love apple products like the iPhone and MacBook.",
@@ -22,20 +13,19 @@ texts = [
 ]
 
 def demo_ner(text):
-    print("\n" + "="*60)
-    print(f"Original: {text}")
-    
-    # Add context before processing
-    text_with_context = add_context(text)
-    print(f"With Context: {text_with_context}")
-    print("-"*60)
-    
-    entities = ner(text_with_context)
+    entities = ner(text)
+    print(f"Text: {text}")
+    brand_found = False
+
     for entity in entities:
-        print(f"Entity: {entity['word']}")
-        print(f"Type: {entity['entity_group']}")
-        print(f"Confidence: {entity['score']:.3f}")
-        print("-"*30)
+        if entity['entity_group'] in ['ORG', 'MISC']:
+            print(f"Detected Brand: {entity['word']} ({entity['entity_group']}, {entity['score']:.2f})")
+            brand_found = True
+
+    if not brand_found:
+        print("Detected Brand: Undetected")
+
+    print("-" * 40)
 
 def main():
     print("NER Demo - Enhanced Product Detection\n")

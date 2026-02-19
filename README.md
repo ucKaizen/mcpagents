@@ -19,5 +19,9 @@ cp .env.example .env
 
 # Start server
 ➜ /workspaces/mcpagents (main) $ ./start_server.sh 
+...
+...
+🚀 Starting REAL MCP server (hello-mcp) on http://127.0.0.1:8000
 # start chatbot (in another terminal)
+➜ /workspaces/mcpagents (main) $ export OPENAI_API_KEY=
 ➜ /workspaces/mcpagents (main) $ ./start_agent.sh 

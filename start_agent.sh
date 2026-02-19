@@ -6,7 +6,7 @@ set -euo pipefail
 : "${OPENAI_API_KEY:?Set OPENAI_API_KEY in your environment or .env}"
 export OPENAI_MODEL="${OPENAI_MODEL:-gpt-4o-mini}"
 # If your MCP server mounts on /mcp, set MCP_URL=http://127.0.0.1:8000/mcp
-export MCP_URL="${MCP_URL:-http://127.0.0.1:8000}"
+export MCP_URL="${MCP_URL:-http://127.0.0.1:8000/mcp}"
 
 echo "🔗 Dynamic GPT↔MCP Bridge"
 echo "   MCP_URL=$MCP_URL"

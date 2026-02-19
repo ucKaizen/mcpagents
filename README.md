@@ -18,5 +18,6 @@ pip install -r requirements.txt
 cp .env.example .env
 
 # Start server
-export API_TOKEN=devtoken123
-uvicorn server.app:app --reload
+➜ /workspaces/mcpagents (main) $ ./start_server.sh 
+# start chatbot (in another terminal)
+➜ /workspaces/mcpagents (main) $ ./start_agent.sh 

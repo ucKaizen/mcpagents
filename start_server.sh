@@ -6,5 +6,5 @@ set -euo pipefail
 # Load .env if present
 [ -f ".env" ] && export $(grep -v '^#' .env | xargs)
 
-echo "🚀 Starting REAL MCP server (hello-mcp) on http://127.0.0.1:8000"
-python server/app_mcp.py
+echo "Starting AGF Media Measurement MCP server on http://127.0.0.1:8000/mcp"
+cd server && python app_mcp.py

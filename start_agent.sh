@@ -8,7 +8,10 @@ export OPENAI_MODEL="${OPENAI_MODEL:-gpt-4o-mini}"
 # If your MCP server mounts on /mcp, set MCP_URL=http://127.0.0.1:8000/mcp
 export MCP_URL="${MCP_URL:-http://127.0.0.1:8000/mcp}"
 
-echo "🔗 Dynamic GPT↔MCP Bridge"
-echo "   MCP_URL=$MCP_URL"
-echo "   MODEL=$OPENAI_MODEL"
-python agent/dynamic_gpt_mcp_bridge.py
+echo "Starting AGF Media Measurement Web Agent"
+echo "  MCP_URL=$MCP_URL"
+echo "  MODEL=$OPENAI_MODEL"
+echo "  Web UI: http://localhost:${AGENT_PORT:-8001}"
+echo ""
+echo "  Use --cli flag for terminal mode"
+python agent/dynamic_gpt_mcp_bridge.py "$@"

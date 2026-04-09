@@ -12,7 +12,6 @@ On startup, registers with the gateway. On shutdown, deregisters.
 
 import os, sys, signal, pathlib, asyncio
 from typing import Optional
-from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from pydantic import BaseModel
@@ -191,26 +190,27 @@ async def register_with_gateway():
         "callback_url": f"{SELF_URL}/invoke",
         "tools": TOOL_DEFS,
     }
-    print(f"[{TOOLSET_NAME}] CONFIG: GATEWAY_URL={GATEWAY_URL}", flush=True)
-    print(f"[{TOOLSET_NAME}] CONFIG: SELF_URL={SELF_URL}", flush=True)
-    print(f"[{TOOLSET_NAME}] CONFIG: callback_url={SELF_URL}/invoke", flush=True)
-    print(f"[{TOOLSET_NAME}] CONFIG: register_url={GATEWAY_URL}/api/register", flush=True)
+    import sys
+    print(f"[{TOOLSET_NAME}] CONFIG: GATEWAY_URL={GATEWAY_URL}", flush=True, file=sys.stderr)
+    print(f"[{TOOLSET_NAME}] CONFIG: SELF_URL={SELF_URL}", flush=True, file=sys.stderr)
+    print(f"[{TOOLSET_NAME}] CONFIG: callback_url={SELF_URL}/invoke", flush=True, file=sys.stderr)
+    print(f"[{TOOLSET_NAME}] CONFIG: register_url={GATEWAY_URL}/api/register", flush=True, file=sys.stderr)
     for attempt in range(10):
         try:
-            print(f"[{TOOLSET_NAME}] Registration attempt {attempt+1}/10 to {GATEWAY_URL}/api/register ...", flush=True)
+            print(f"[{TOOLSET_NAME}] Registration attempt {attempt+1}/10 to {GATEWAY_URL}/api/register ...", flush=True, file=sys.stderr)
             async with httpx.AsyncClient(timeout=10.0) as client:
                 resp = await client.post(f"{GATEWAY_URL}/api/register", json=payload)
                 resp.raise_for_status()
-                print(f"[{TOOLSET_NAME}] SUCCESS: Registered with gateway: {resp.json()}", flush=True)
+                print(f"[{TOOLSET_NAME}] SUCCESS: Registered with gateway: {resp.json()}", flush=True, file=sys.stderr)
                 return
         except httpx.ConnectError as e:
-            print(f"[{TOOLSET_NAME}] CONNECT ERROR (attempt {attempt+1}): Cannot reach gateway at {GATEWAY_URL} — {e}", flush=True)
+            print(f"[{TOOLSET_NAME}] CONNECT ERROR (attempt {attempt+1}): Cannot reach gateway at {GATEWAY_URL} — {e}", flush=True, file=sys.stderr)
         except httpx.HTTPStatusError as e:
-            print(f"[{TOOLSET_NAME}] HTTP ERROR (attempt {attempt+1}): {e.response.status_code} — {e.response.text}", flush=True)
+            print(f"[{TOOLSET_NAME}] HTTP ERROR (attempt {attempt+1}): {e.response.status_code} — {e.response.text}", flush=True, file=sys.stderr)
         except Exception as e:
-            print(f"[{TOOLSET_NAME}] ERROR (attempt {attempt+1}): {type(e).__name__}: {e}", flush=True)
+            print(f"[{TOOLSET_NAME}] ERROR (attempt {attempt+1}): {type(e).__name__}: {e}", flush=True, file=sys.stderr)
         await asyncio.sleep(2)
-    print(f"[{TOOLSET_NAME}] FAILED: Could not register with gateway after 10 attempts", flush=True)
+    print(f"[{TOOLSET_NAME}] FAILED: Could not register with gateway after 10 attempts", flush=True, file=sys.stderr)
 
 
 async def deregister_from_gateway():
@@ -226,13 +226,23 @@ async def deregister_from_gateway():
 # ---------------------------------------------------------------------------
 # FastAPI app
 # ---------------------------------------------------------------------------
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    await register_with_gateway()
-    yield
-    await deregister_from_gateway()
+app = FastAPI(title=f"Toolset: {TOOLSET_NAME}")
 
-app = FastAPI(title=f"Toolset: {TOOLSET_NAME}", lifespan=lifespan)
+_registration_task = None
+
+@app.on_event("startup")
+async def on_startup():
+    global _registration_task
+    import sys
+    print(f"[{TOOLSET_NAME}] ===== STARTUP =====", flush=True, file=sys.stderr)
+    print(f"[{TOOLSET_NAME}] GATEWAY_URL={GATEWAY_URL}", flush=True, file=sys.stderr)
+    print(f"[{TOOLSET_NAME}] SELF_URL={SELF_URL}", flush=True, file=sys.stderr)
+    print(f"[{TOOLSET_NAME}] PORT={PORT}", flush=True, file=sys.stderr)
+    _registration_task = asyncio.create_task(register_with_gateway())
+
+@app.on_event("shutdown")
+async def on_shutdown():
+    await deregister_from_gateway()
 
 
 class InvokeRequest(BaseModel):

@@ -26,9 +26,7 @@
     --radius: 12px;
     --radius-sm: 8px;
   }
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
   body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background: var(--bg-primary);
@@ -43,278 +41,209 @@
   header {
     background: var(--bg-secondary);
     border-bottom: 1px solid var(--border);
-    padding: 14px 24px;
+    padding: 12px 24px;
     display: flex;
     align-items: center;
     gap: 16px;
     flex-shrink: 0;
   }
-  header h1 {
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--text-primary);
-  }
-  header .subtitle {
-    font-size: 13px;
-    color: var(--text-secondary);
-  }
+  header h1 { font-size: 18px; font-weight: 600; }
+  header .subtitle { font-size: 13px; color: var(--text-secondary); }
   .status-dot {
-    width: 10px; height: 10px;
-    border-radius: 50%;
-    background: #ef4444;
-    flex-shrink: 0;
-    transition: background 0.3s;
+    width: 10px; height: 10px; border-radius: 50%;
+    background: #ef4444; flex-shrink: 0; transition: background 0.3s;
   }
   .status-dot.connected { background: #22c55e; }
 
-  /* Main layout */
-  .main {
+  /* Toolset status bar */
+  .toolset-bar {
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border);
+    padding: 8px 24px;
     display: flex;
-    flex: 1;
-    overflow: hidden;
+    align-items: center;
+    gap: 16px;
+    flex-shrink: 0;
+    font-size: 13px;
+    overflow-x: auto;
   }
+  .toolset-bar .label {
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+  }
+  .toolset-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    flex-shrink: 0;
+    transition: all 0.3s;
+  }
+  .toolset-chip.online {
+    background: rgba(34, 197, 94, 0.15);
+    color: #4ade80;
+    border: 1px solid rgba(34, 197, 94, 0.3);
+  }
+  .toolset-chip.offline {
+    background: rgba(107, 111, 128, 0.1);
+    color: var(--text-muted);
+    border: 1px solid rgba(107, 111, 128, 0.2);
+  }
+  .toolset-chip .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+  }
+  .toolset-chip.online .dot { background: #22c55e; }
+  .toolset-chip.offline .dot { background: var(--text-muted); }
+  .tool-count {
+    color: var(--text-muted);
+    font-size: 12px;
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+
+  /* Main layout */
+  .main { display: flex; flex: 1; overflow: hidden; }
 
   /* Chat panel */
   .chat-panel {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
+    flex: 1; display: flex; flex-direction: column; min-width: 0;
   }
-
   .chat-messages {
-    flex: 1;
-    overflow-y: auto;
-    padding: 20px 24px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+    flex: 1; overflow-y: auto; padding: 20px 24px;
+    display: flex; flex-direction: column; gap: 16px;
   }
-
   .chat-messages::-webkit-scrollbar { width: 6px; }
   .chat-messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
   .msg {
-    max-width: 85%;
-    padding: 12px 16px;
-    border-radius: var(--radius);
-    line-height: 1.55;
-    font-size: 14px;
-    white-space: pre-wrap;
-    word-break: break-word;
+    max-width: 85%; padding: 12px 16px; border-radius: var(--radius);
+    line-height: 1.55; font-size: 14px; white-space: pre-wrap; word-break: break-word;
   }
   .msg.user {
-    align-self: flex-end;
-    background: var(--user-bg);
-    color: #fff;
+    align-self: flex-end; background: var(--user-bg); color: #fff;
     border-bottom-right-radius: 4px;
   }
   .msg.assistant {
-    align-self: flex-start;
-    background: var(--bg-card);
+    align-self: flex-start; background: var(--bg-card);
     border-bottom-left-radius: 4px;
   }
   .msg.status {
-    align-self: center;
-    color: var(--text-muted);
-    font-size: 13px;
-    font-style: italic;
-    padding: 4px;
+    align-self: center; color: var(--text-muted); font-size: 13px;
+    font-style: italic; padding: 4px;
+  }
+  .msg.system-event {
+    align-self: center; font-size: 12px; padding: 6px 16px;
+    border-radius: 20px; border: 1px solid var(--border);
+  }
+  .msg.system-event.toolset-online {
+    color: #4ade80; border-color: rgba(34, 197, 94, 0.3);
+    background: rgba(34, 197, 94, 0.08);
+  }
+  .msg.system-event.toolset-offline {
+    color: #f87171; border-color: rgba(239, 68, 68, 0.3);
+    background: rgba(239, 68, 68, 0.08);
   }
 
   /* Input area */
   .chat-input-area {
-    padding: 16px 24px;
-    border-top: 1px solid var(--border);
-    background: var(--bg-secondary);
-    display: flex;
-    gap: 12px;
-    flex-shrink: 0;
+    padding: 16px 24px; border-top: 1px solid var(--border);
+    background: var(--bg-secondary); display: flex; gap: 12px; flex-shrink: 0;
   }
   .chat-input-area textarea {
-    flex: 1;
-    background: var(--bg-input);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 12px 16px;
-    color: var(--text-primary);
-    font-size: 14px;
-    font-family: inherit;
-    resize: none;
-    outline: none;
-    min-height: 48px;
-    max-height: 120px;
-    line-height: 1.4;
+    flex: 1; background: var(--bg-input); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 12px 16px;
+    color: var(--text-primary); font-size: 14px; font-family: inherit;
+    resize: none; outline: none; min-height: 48px; max-height: 120px; line-height: 1.4;
   }
-  .chat-input-area textarea:focus {
-    border-color: var(--accent);
-  }
-  .chat-input-area textarea::placeholder {
-    color: var(--text-muted);
-  }
+  .chat-input-area textarea:focus { border-color: var(--accent); }
+  .chat-input-area textarea::placeholder { color: var(--text-muted); }
   .chat-input-area button {
-    background: var(--accent);
-    color: #fff;
-    border: none;
-    border-radius: var(--radius-sm);
-    padding: 0 24px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s;
-    flex-shrink: 0;
+    background: var(--accent); color: #fff; border: none;
+    border-radius: var(--radius-sm); padding: 0 24px;
+    font-size: 14px; font-weight: 600; cursor: pointer;
+    transition: background 0.2s; flex-shrink: 0;
   }
   .chat-input-area button:hover { background: var(--accent-hover); }
-  .chat-input-area button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
+  .chat-input-area button:disabled { opacity: 0.5; cursor: not-allowed; }
 
   /* Tool inspector panel */
   .inspector-panel {
-    width: 420px;
-    border-left: 1px solid var(--border);
-    background: var(--bg-secondary);
-    display: flex;
-    flex-direction: column;
-    flex-shrink: 0;
+    width: 420px; border-left: 1px solid var(--border);
+    background: var(--bg-secondary); display: flex; flex-direction: column; flex-shrink: 0;
   }
   .inspector-header {
-    padding: 14px 20px;
-    border-bottom: 1px solid var(--border);
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text-secondary);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    padding: 14px 20px; border-bottom: 1px solid var(--border);
+    font-size: 14px; font-weight: 600; color: var(--text-secondary);
+    display: flex; justify-content: space-between; align-items: center;
   }
   .inspector-header .clear-btn {
-    background: none;
-    border: 1px solid var(--border);
-    color: var(--text-muted);
-    padding: 4px 12px;
-    border-radius: 6px;
-    font-size: 12px;
-    cursor: pointer;
+    background: none; border: 1px solid var(--border);
+    color: var(--text-muted); padding: 4px 12px; border-radius: 6px;
+    font-size: 12px; cursor: pointer;
   }
-  .inspector-header .clear-btn:hover {
-    border-color: var(--text-muted);
-    color: var(--text-secondary);
-  }
+  .inspector-header .clear-btn:hover { border-color: var(--text-muted); color: var(--text-secondary); }
   .inspector-feed {
-    flex: 1;
-    overflow-y: auto;
-    padding: 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+    flex: 1; overflow-y: auto; padding: 12px;
+    display: flex; flex-direction: column; gap: 8px;
   }
   .inspector-feed::-webkit-scrollbar { width: 6px; }
   .inspector-feed::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
   .tool-event {
-    border-radius: var(--radius-sm);
-    padding: 10px 14px;
-    font-size: 13px;
-    border-left: 3px solid;
-    cursor: pointer;
-    transition: opacity 0.2s;
+    border-radius: var(--radius-sm); padding: 10px 14px;
+    font-size: 13px; border-left: 3px solid; cursor: pointer; transition: opacity 0.2s;
   }
-  .tool-event.call {
-    background: var(--tool-call-bg);
-    border-left-color: var(--tool-call-border);
-  }
-  .tool-event.result {
-    background: var(--tool-result-bg);
-    border-left-color: var(--tool-result-border);
-  }
-  .tool-event.error {
-    background: var(--error-bg);
-    border-left-color: var(--error-border);
+  .tool-event.call { background: var(--tool-call-bg); border-left-color: var(--tool-call-border); }
+  .tool-event.result { background: var(--tool-result-bg); border-left-color: var(--tool-result-border); }
+  .tool-event.error { background: var(--error-bg); border-left-color: var(--error-border); }
+  .tool-event.registry {
+    background: rgba(99, 102, 241, 0.1); border-left-color: var(--accent);
   }
   .tool-event .label {
-    font-weight: 600;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 4px;
+    font-weight: 600; font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.5px; margin-bottom: 4px;
   }
   .tool-event.call .label { color: var(--tool-call-border); }
   .tool-event.result .label { color: var(--tool-result-border); }
   .tool-event.error .label { color: var(--error-border); }
-  .tool-event .name {
-    font-weight: 600;
-    color: var(--text-primary);
-    margin-bottom: 6px;
-  }
+  .tool-event.registry .label { color: var(--accent); }
+  .tool-event .name { font-weight: 600; color: var(--text-primary); margin-bottom: 6px; }
   .tool-event pre {
-    background: rgba(0,0,0,0.25);
-    padding: 8px 10px;
-    border-radius: 6px;
-    overflow-x: auto;
-    font-size: 12px;
-    color: var(--text-secondary);
-    line-height: 1.5;
-    max-height: 150px;
-    overflow-y: auto;
-    white-space: pre-wrap;
-    word-break: break-all;
+    background: rgba(0,0,0,0.25); padding: 8px 10px; border-radius: 6px;
+    overflow-x: auto; font-size: 12px; color: var(--text-secondary);
+    line-height: 1.5; max-height: 150px; overflow-y: auto;
+    white-space: pre-wrap; word-break: break-all;
   }
   .tool-event.collapsed pre { display: none; }
-  .tool-event .toggle-hint {
-    font-size: 11px;
-    color: var(--text-muted);
-    margin-top: 4px;
-  }
+  .tool-event .toggle-hint { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
   .tool-event.collapsed .toggle-hint::after { content: "click to expand"; }
   .tool-event:not(.collapsed) .toggle-hint::after { content: "click to collapse"; }
 
   /* Welcome */
-  .welcome {
-    text-align: center;
-    padding: 60px 40px;
-    color: var(--text-secondary);
-  }
-  .welcome h2 {
-    font-size: 22px;
-    color: var(--text-primary);
-    margin-bottom: 12px;
-  }
+  .welcome { text-align: center; padding: 60px 40px; color: var(--text-secondary); }
+  .welcome h2 { font-size: 22px; color: var(--text-primary); margin-bottom: 12px; }
   .welcome p {
-    font-size: 14px;
-    line-height: 1.6;
-    max-width: 500px;
-    margin: 0 auto 20px;
+    font-size: 14px; line-height: 1.6; max-width: 500px; margin: 0 auto 20px;
   }
   .welcome .examples {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    align-items: center;
+    display: flex; flex-direction: column; gap: 8px; align-items: center;
   }
   .welcome .example-q {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 10px 18px;
-    font-size: 13px;
-    color: var(--text-secondary);
-    cursor: pointer;
-    transition: border-color 0.2s, color 0.2s;
-    max-width: 480px;
-    width: 100%;
-    text-align: left;
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 10px 18px;
+    font-size: 13px; color: var(--text-secondary); cursor: pointer;
+    transition: border-color 0.2s, color 0.2s; max-width: 480px; width: 100%; text-align: left;
   }
-  .welcome .example-q:hover {
-    border-color: var(--accent);
-    color: var(--text-primary);
-  }
+  .welcome .example-q:hover { border-color: var(--accent); color: var(--text-primary); }
 
-  /* Responsive */
-  @media (max-width: 900px) {
-    .inspector-panel { display: none; }
-  }
+  @media (max-width: 900px) { .inspector-panel { display: none; } }
 </style>
 </head>
 <body>
@@ -323,9 +252,23 @@
   <div class="status-dot" id="statusDot" title="Disconnected"></div>
   <div>
     <h1>AGF Media Measurement</h1>
-    <div class="subtitle">TV Audience Analytics powered by MCP + LLM</div>
+    <div class="subtitle">TV Audience Analytics — MCP Gateway + Dynamic Toolsets</div>
   </div>
 </header>
+
+<!-- Toolset status bar -->
+<div class="toolset-bar" id="toolsetBar">
+  <span class="label">Toolsets</span>
+  <div class="toolset-chip offline" id="chip-basic-metrics">
+    <span class="dot"></span>
+    <span>Basic Metrics</span>
+  </div>
+  <div class="toolset-chip offline" id="chip-advanced-analytics">
+    <span class="dot"></span>
+    <span>Advanced Analytics</span>
+  </div>
+  <span class="tool-count" id="toolCount">0 tools available</span>
+</div>
 
 <div class="main">
   <!-- Chat Panel -->
@@ -333,13 +276,13 @@
     <div class="chat-messages" id="chatMessages">
       <div class="welcome" id="welcome">
         <h2>AGF Germany TV Analytics</h2>
-        <p>Ask questions about TV audience reach, market share, cross-media metrics, and demographics for German TV channels and programs.</p>
+        <p>Ask questions about TV audience reach, market share, cross-media metrics, and demographics. Tools become available as toolsets come online.</p>
         <div class="examples">
-          <div class="example-q" onclick="askExample(this)">What are the top 5 programs by reach among viewers aged 14-29?</div>
-          <div class="example-q" onclick="askExample(this)">Compare Das Erste, ZDF, and RTL market share for female viewers</div>
+          <div class="example-q" onclick="askExample(this)">What channels and programs are available?</div>
+          <div class="example-q" onclick="askExample(this)">What is the reach of Tagesschau among viewers aged 65+?</div>
+          <div class="example-q" onclick="askExample(this)">Compare Das Erste, ZDF, and RTL market share</div>
           <div class="example-q" onclick="askExample(this)">Show me the full demographic breakdown for Tatort</div>
-          <div class="example-q" onclick="askExample(this)">What is the cross-media reach of Germanys Next Topmodel among 14-29?</div>
-          <div class="example-q" onclick="askExample(this)">Which genre performs best among male viewers aged 30-49?</div>
+          <div class="example-q" onclick="askExample(this)">What are the top 5 programs by reach among 14-29 year olds?</div>
         </div>
       </div>
     </div>
@@ -358,7 +301,7 @@
     </div>
     <div class="inspector-feed" id="inspectorFeed">
       <div style="color: var(--text-muted); font-size: 13px; text-align: center; padding: 40px 20px;">
-        Tool calls and results will appear here as the agent interacts with the MCP server.
+        Tool calls, results, and registry events will appear here.
       </div>
     </div>
   </div>
@@ -371,34 +314,27 @@ const sendBtn = document.getElementById('sendBtn');
 const statusDot = document.getElementById('statusDot');
 const inspectorFeed = document.getElementById('inspectorFeed');
 const welcome = document.getElementById('welcome');
+const toolCount = document.getElementById('toolCount');
 
 let ws = null;
 let isProcessing = false;
 let inspectorHasContent = false;
+let previousToolsets = {};
 
 function connect() {
   const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
   ws = new WebSocket(`${proto}//${location.host}/ws/chat`);
-
   ws.onopen = () => {
     statusDot.classList.add('connected');
     statusDot.title = 'Connected';
   };
-
   ws.onclose = () => {
     statusDot.classList.remove('connected');
     statusDot.title = 'Disconnected — reconnecting...';
     setTimeout(connect, 2000);
   };
-
-  ws.onerror = () => {
-    ws.close();
-  };
-
-  ws.onmessage = (event) => {
-    const data = JSON.parse(event.data);
-    handleServerMessage(data);
-  };
+  ws.onerror = () => ws.close();
+  ws.onmessage = (event) => handleServerMessage(JSON.parse(event.data));
 }
 
 function handleServerMessage(data) {
@@ -422,13 +358,64 @@ function handleServerMessage(data) {
       const isError = data.result && data.result.error;
       addInspectorEvent(isError ? 'error' : 'result', data.name, data.result);
       break;
+    case 'registry_update':
+      handleRegistryUpdate(data);
+      break;
   }
+}
+
+function handleRegistryUpdate(data) {
+  const toolsets = data.toolsets || {};
+  const total = data.total_tools || 0;
+
+  // Update tool count
+  toolCount.textContent = `${total} tool${total !== 1 ? 's' : ''} available`;
+
+  // Known toolset chips
+  const knownToolsets = {
+    'basic-metrics': 'chip-basic-metrics',
+    'advanced-analytics': 'chip-advanced-analytics',
+  };
+
+  // Detect changes and update chips
+  for (const [tsName, chipId] of Object.entries(knownToolsets)) {
+    const chip = document.getElementById(chipId);
+    if (!chip) continue;
+    const isOnline = tsName in toolsets;
+    const wasOnline = tsName in previousToolsets;
+
+    chip.className = `toolset-chip ${isOnline ? 'online' : 'offline'}`;
+
+    // Show chat notification on change
+    if (isOnline && !wasOnline) {
+      const tools = toolsets[tsName];
+      appendSystemEvent('toolset-online',
+        `Toolset "${tsName}" came online with ${tools.length} tools: ${tools.join(', ')}`);
+      addInspectorEvent('registry', `${tsName} registered`,
+        { tools: tools });
+    } else if (!isOnline && wasOnline) {
+      appendSystemEvent('toolset-offline',
+        `Toolset "${tsName}" went offline`);
+      addInspectorEvent('registry', `${tsName} deregistered`, {});
+    }
+  }
+
+  previousToolsets = { ...toolsets };
 }
 
 function appendMessage(role, text) {
   if (welcome) welcome.style.display = 'none';
   const div = document.createElement('div');
   div.className = `msg ${role}`;
+  div.textContent = text;
+  chatMessages.appendChild(div);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function appendSystemEvent(cls, text) {
+  if (welcome) welcome.style.display = 'none';
+  const div = document.createElement('div');
+  div.className = `msg system-event ${cls}`;
   div.textContent = text;
   chatMessages.appendChild(div);
   chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -456,9 +443,11 @@ function addInspectorEvent(type, name, data) {
   }
   const div = document.createElement('div');
   div.className = `tool-event ${type}`;
-  const labelText = type === 'call' ? 'TOOL CALL' : type === 'result' ? 'RESULT' : 'ERROR';
+  const labels = {
+    call: 'TOOL CALL', result: 'RESULT', error: 'ERROR', registry: 'REGISTRY'
+  };
   div.innerHTML = `
-    <div class="label">${labelText}</div>
+    <div class="label">${labels[type] || type.toUpperCase()}</div>
     <div class="name">${escapeHtml(name)}</div>
     <pre>${escapeHtml(JSON.stringify(data, null, 2))}</pre>
     <div class="toggle-hint"></div>
@@ -471,7 +460,7 @@ function addInspectorEvent(type, name, data) {
 function clearInspector() {
   inspectorFeed.innerHTML = `
     <div style="color: var(--text-muted); font-size: 13px; text-align: center; padding: 40px 20px;">
-      Tool calls and results will appear here as the agent interacts with the MCP server.
+      Tool calls, results, and registry events will appear here.
     </div>`;
   inspectorHasContent = false;
 }
@@ -492,21 +481,15 @@ function setProcessing(val) {
 function sendMessage() {
   const text = chatInput.value.trim();
   if (!text || isProcessing || !ws || ws.readyState !== WebSocket.OPEN) return;
-
   appendMessage('user', text);
   chatInput.value = '';
   chatInput.style.height = 'auto';
   setProcessing(true);
-
   ws.send(JSON.stringify({ message: text }));
 }
 
 function handleKey(e) {
-  if (e.key === 'Enter' && !e.shiftKey) {
-    e.preventDefault();
-    sendMessage();
-  }
-  // Auto-resize textarea
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
   setTimeout(() => {
     chatInput.style.height = 'auto';
     chatInput.style.height = Math.min(chatInput.scrollHeight, 120) + 'px';
@@ -518,7 +501,6 @@ function askExample(el) {
   sendMessage();
 }
 
-// Boot
 connect();
 chatInput.focus();
 </script>

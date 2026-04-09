@@ -191,17 +191,26 @@ async def register_with_gateway():
         "callback_url": f"{SELF_URL}/invoke",
         "tools": TOOL_DEFS,
     }
+    print(f"[{TOOLSET_NAME}] CONFIG: GATEWAY_URL={GATEWAY_URL}", flush=True)
+    print(f"[{TOOLSET_NAME}] CONFIG: SELF_URL={SELF_URL}", flush=True)
+    print(f"[{TOOLSET_NAME}] CONFIG: callback_url={SELF_URL}/invoke", flush=True)
+    print(f"[{TOOLSET_NAME}] CONFIG: register_url={GATEWAY_URL}/api/register", flush=True)
     for attempt in range(10):
         try:
+            print(f"[{TOOLSET_NAME}] Registration attempt {attempt+1}/10 to {GATEWAY_URL}/api/register ...", flush=True)
             async with httpx.AsyncClient(timeout=10.0) as client:
                 resp = await client.post(f"{GATEWAY_URL}/api/register", json=payload)
                 resp.raise_for_status()
-                print(f"[{TOOLSET_NAME}] Registered with gateway: {resp.json()}")
+                print(f"[{TOOLSET_NAME}] SUCCESS: Registered with gateway: {resp.json()}", flush=True)
                 return
+        except httpx.ConnectError as e:
+            print(f"[{TOOLSET_NAME}] CONNECT ERROR (attempt {attempt+1}): Cannot reach gateway at {GATEWAY_URL} — {e}", flush=True)
+        except httpx.HTTPStatusError as e:
+            print(f"[{TOOLSET_NAME}] HTTP ERROR (attempt {attempt+1}): {e.response.status_code} — {e.response.text}", flush=True)
         except Exception as e:
-            print(f"[{TOOLSET_NAME}] Registration attempt {attempt+1} failed: {e}")
-            await asyncio.sleep(2)
-    print(f"[{TOOLSET_NAME}] WARNING: Could not register with gateway after 10 attempts")
+            print(f"[{TOOLSET_NAME}] ERROR (attempt {attempt+1}): {type(e).__name__}: {e}", flush=True)
+        await asyncio.sleep(2)
+    print(f"[{TOOLSET_NAME}] FAILED: Could not register with gateway after 10 attempts", flush=True)
 
 
 async def deregister_from_gateway():

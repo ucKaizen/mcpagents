@@ -5,8 +5,9 @@ Toolsets register themselves via REST API. When the LLM calls a tool,
 the gateway proxies the invocation to the owning toolset's callback URL.
 """
 
-import os, json, re, time, pathlib
+import os, json, re, time, pathlib, asyncio
 from typing import Dict, Any, List, Optional
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse
@@ -65,6 +66,39 @@ class ToolsetRecord:
 
 # Global registry
 _registry: Dict[str, ToolsetRecord] = {}
+
+HEARTBEAT_INTERVAL = int(os.getenv("HEARTBEAT_INTERVAL", "15"))  # seconds
+
+
+# ---------------------------------------------------------------------------
+# Heartbeat — periodically check if toolsets are still alive
+# ---------------------------------------------------------------------------
+
+async def _heartbeat_loop():
+    """Ping each registered toolset's health endpoint. Remove dead ones."""
+    while True:
+        await asyncio.sleep(HEARTBEAT_INTERVAL)
+        if not _registry:
+            continue
+
+        dead = []
+        async with httpx.AsyncClient(timeout=5.0) as client:
+            for name, record in list(_registry.items()):
+                # Derive health URL from callback URL (replace /invoke with /health)
+                health_url = record.callback_url.rsplit("/", 1)[0] + "/health"
+                try:
+                    resp = await client.get(health_url)
+                    resp.raise_for_status()
+                except Exception:
+                    dead.append(name)
+                    print(f"[Heartbeat] Toolset '{name}' is unreachable — removing")
+
+        for name in dead:
+            if name in _registry:
+                del _registry[name]
+
+        if dead:
+            await broadcast_registry_update()
 
 
 # ---------------------------------------------------------------------------
@@ -155,7 +189,13 @@ async def invoke_tool(tool_name: str, args: Dict[str, Any]) -> Dict[str, Any]:
 # ---------------------------------------------------------------------------
 # FastAPI app
 # ---------------------------------------------------------------------------
-app = FastAPI(title="AGF Media Measurement Gateway")
+@asynccontextmanager
+async def lifespan(app):
+    task = asyncio.create_task(_heartbeat_loop())
+    yield
+    task.cancel()
+
+app = FastAPI(title="AGF Media Measurement Gateway", lifespan=lifespan)
 
 
 # --- Registry API ---

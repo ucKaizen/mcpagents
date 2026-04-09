@@ -74,6 +74,9 @@ HEARTBEAT_INTERVAL = int(os.getenv("HEARTBEAT_INTERVAL", "15"))  # seconds
 # Heartbeat — periodically check if toolsets are still alive
 # ---------------------------------------------------------------------------
 
+_heartbeat_failures: Dict[str, int] = {}
+HEARTBEAT_MAX_FAILURES = 3  # remove after 3 consecutive failures
+
 async def _heartbeat_loop():
     """Ping each registered toolset's health endpoint. Remove dead ones."""
     while True:
@@ -84,18 +87,24 @@ async def _heartbeat_loop():
         dead = []
         async with httpx.AsyncClient(timeout=5.0) as client:
             for name, record in list(_registry.items()):
-                # Derive health URL from callback URL (replace /invoke with /health)
                 health_url = record.callback_url.rsplit("/", 1)[0] + "/health"
                 try:
                     resp = await client.get(health_url)
                     resp.raise_for_status()
-                except Exception:
-                    dead.append(name)
-                    print(f"[Heartbeat] Toolset '{name}' is unreachable — removing")
+                    # Reset failure count on success
+                    _heartbeat_failures.pop(name, None)
+                except Exception as e:
+                    count = _heartbeat_failures.get(name, 0) + 1
+                    _heartbeat_failures[name] = count
+                    print(f"[Heartbeat] '{name}' check failed ({count}/{HEARTBEAT_MAX_FAILURES}): {health_url} — {type(e).__name__}: {e}", flush=True)
+                    if count >= HEARTBEAT_MAX_FAILURES:
+                        dead.append(name)
+                        print(f"[Heartbeat] Removing '{name}' after {HEARTBEAT_MAX_FAILURES} consecutive failures", flush=True)
 
         for name in dead:
             if name in _registry:
                 del _registry[name]
+                _heartbeat_failures.pop(name, None)
 
         if dead:
             await broadcast_registry_update()

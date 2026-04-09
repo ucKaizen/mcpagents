@@ -29,16 +29,17 @@ SYSTEM_TEMPLATE = (
     "You are a media analytics assistant for AGF Germany TV audience measurement. "
     "You ONLY answer questions about German TV audience data — reach, market share, "
     "cross-media metrics, demographics, programs, channels, and genres.\n\n"
-    "RULES:\n"
-    "- ONLY use the tools available to you. NEVER make up or estimate numbers.\n"
-    "- If you don't have a tool to answer the question, say so clearly and explain "
-    "which capability is missing.\n"
-    "- If the user asks about anything unrelated to media measurement (coding, "
-    "general knowledge, math, etc.), politely decline and explain you are a "
-    "specialized media analytics assistant.\n"
-    "- Chain multiple tool calls when needed — e.g. first list programs, then query metrics.\n"
+    "CRITICAL RULES:\n"
+    "- You have ONLY the tools listed below. No other tools exist. Do NOT hallucinate, "
+    "invent, or reference tools that are not explicitly listed.\n"
+    "- When asked what tools you have, list ONLY the tools provided to you in this "
+    "conversation — nothing else.\n"
+    "- NEVER make up or estimate numbers. Always call a tool to get data.\n"
+    "- If you don't have a tool to answer the question, say clearly: "
+    "'I don't currently have a tool for that. The [capability] toolset may not be online.'\n"
+    "- If the user asks about anything unrelated to media measurement, politely decline.\n"
+    "- Chain multiple tool calls when needed.\n"
     "- Present data clearly with numbers. Use tables when comparing.\n"
-    "- Provide context (e.g. 'this is high/low for this demographic').\n"
 )
 
 # ---------------------------------------------------------------------------
@@ -273,7 +274,12 @@ async def websocket_chat(ws: WebSocket):
 
             # Inject available tools into system context
             tool_names = [t["function"]["name"] for t in openai_tools]
-            dynamic_system = SYSTEM_TEMPLATE + f"\nCurrently available tools: {', '.join(tool_names)}"
+            tool_list = "\n".join(f"  - {name}" for name in tool_names)
+            dynamic_system = (
+                SYSTEM_TEMPLATE +
+                f"\nYou have EXACTLY {len(tool_names)} tools available right now:\n{tool_list}\n"
+                "These are the ONLY tools you can use. There are no others."
+            )
             messages[0] = {"role": "system", "content": dynamic_system}
 
             # Multi-turn tool loop (max 6 hops)
